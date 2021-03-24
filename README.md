@@ -1,3 +1,1 @@
-# SoftDesProject1
-
-Checking that I can push to the main repo. :) -Dasha
+# Benfords Law in Elections - Abitamim and Dasha's SoftDes Project 1
