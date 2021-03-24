@@ -1,1 +1,2 @@
-# Benfords Law in Elections - Abitamim and Dasha's SoftDes Project 1
+# Benfords Law in Elections 
+Abitamim and Dasha's SoftDes Project 1
