@@ -47,20 +47,21 @@ def get_data_for_states():
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     with webdriver.Chrome(options=options) as driver:
-        driver.get(
-            "https://uselectionatlas.org/RESULTS/state.php?year=2020&off=0&elect=0&fips=1&f=0")
-        drop_down = driver.find_element_by_name("fips")
-        counties = drop_down.find_elements_by_tag_name("option")
-        for i in range(len(counties)):
+        for fip_number in [x for x in range(1, 57) if x not in (3, 7, 11, 14, 43, 52)]:
+            driver.get(
+                f"https://uselectionatlas.org/RESULTS/state.php?year=2020&off=0&elect=0&fips={fip_number}&f=0")
             drop_down = driver.find_element_by_name("fips")
             counties = drop_down.find_elements_by_tag_name("option")
-            county = counties[i]
-            county.click()
-            input = driver.find_element_by_name("submit")
-            input.click()
-            county_data = get_vote_counts(driver, driver.page_source)
-            save_csv(county_data, "data/2020-elections-data.txt")
-            driver.back()
+            for i in range(len(counties)):
+                drop_down = driver.find_element_by_name("fips")
+                counties = drop_down.find_elements_by_tag_name("option")
+                county = counties[i]
+                county.click()
+                input = driver.find_element_by_name("submit")
+                input.click()
+                county_data = get_vote_counts(driver, driver.page_source)
+                save_csv(county_data, "data/2020-elections-data.txt")
+                driver.back()
 
 if __name__ == "__main__":
     get_data_for_states()
