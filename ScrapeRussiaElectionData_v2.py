@@ -106,15 +106,15 @@ def get_election_data():
     table_format.click()
 
     drivers = []
-    data = ""
+    data =""
     dropdown_regions = driver.find_element_by_name('gs')
     election_regions = dropdown_regions.find_elements_by_tag_name('option')
     for k in range(1,len(election_regions)):
         drivers.append(webdriver.Chrome())
         data_thread = threading.Thread(get_data(drivers[k],driver[k].current_url, k))
-        data_thread.start()
+        data += data_thread.start()
     
-    save_csv(oblast_data, 'data/2018-Russia-election-data.txt')
+    save_csv(data, 'data/2018-Russia-election-data.txt')
     driver.quit()
 
 
