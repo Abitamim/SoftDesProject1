@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from os import stat
+from bs4 import BeautifulSoup
+
 
 def get_vote_counts(driver, page_html):
     '''
@@ -55,11 +57,11 @@ def get_election_data():
     table_format.click()
 
     dropdown_cities = driver.find_element_by_name('gs')
-    election_cities = dropdown_cities.find_element_by_tag_name('options')
+    election_cities = dropdown_cities.find_elements_by_tag_name('options')
     for cities in election_cities:
         #navigate to the page with data for the city
         driver.find_element_by_link_text(f'{cities}').click()
-        select_button = driver.find_element_by_name('go')
+        select_button = driver.find_elements_by_name('go')
         select_button.click()
         
         dropdown_oblast = driver.find_element_by_name('gs')
@@ -69,8 +71,12 @@ def get_election_data():
             #navigate to the page for an oblast in that city
             driver.find_element_by_link_text(f'{oblast}').click()
             select_button.click()
-            oblast_data = get_vote_counts(driver, driver.page_source)
+            #oblast_data = get_vote_counts(driver, driver.page_source)
+            oblast_data =''
             save_csv(oblast_data, 'data/2018-Russia-election-data.txt')
             driver.back()
 
     driver.quit()
+
+if __name__ == '__main__':
+    get_election_data()
