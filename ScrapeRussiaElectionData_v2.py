@@ -7,7 +7,10 @@ import time
 from os import stat
 from bs4 import BeautifulSoup
 import re
+import concurrent.futures
 import threading
+
+MAX_THREADS = 5
 
 def get_vote_counts(page_html:str) -> str:
     '''
@@ -50,7 +53,7 @@ def save_csv(votes_data, path):
     file.close()
 
 def get_data(driver, url, k):
-    oblast_data = ""
+
     driver.get(url)
     time.sleep(30)
 
@@ -72,7 +75,7 @@ def get_data(driver, url, k):
     for i in range(1,len(election_oblast)):
             dropdown_oblast = driver.find_element_by_name('gs')
             election_oblast = dropdown_oblast.find_elements_by_tag_name('option')
-            # navigate to the page for an oblast in that city
+            # navigate to the page for an oblast in that oblast
             election_oblast[i].click()
             select_button = driver.find_element_by_name('go')
             select_button.click()
@@ -105,16 +108,27 @@ def get_election_data():
 
     table_format.click()
 
-    drivers = []
-    data =""
+    
     dropdown_regions = driver.find_element_by_name('gs')
     election_regions = dropdown_regions.find_elements_by_tag_name('option')
-    for k in range(1,len(election_regions)):
-        drivers.append(webdriver.Chrome())
-        data_thread = threading.Thread(get_data(drivers[k],driver[k].current_url, k))
-        data += data_thread.start()
+
+    threads = min(MAX_THREADS, len(election_regions))
+
+    #with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+        #oblast_data = executor.map(get_data, [driver, driver.current_url, election_regions])
     
-    save_csv(data, 'data/2018-Russia-election-data.txt')
+    threads = []
+
+    for k in range(1,len(election_regions)):
+        #add thread threshhold
+            data_thread = threading.Thread(target = get_data, args=[driver, driver.current_url, k])
+            data_thread.start()
+            threads.append(data_thread)
+    for thread in threads:
+        thread.join()
+
+    #for results in oblast_data:
+    save_csv(thread, 'data/2018-Russia-election-data.txt')
     driver.quit()
 
 
