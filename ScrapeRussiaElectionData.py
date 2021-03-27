@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -26,8 +26,10 @@ def get_vote_counts(page_html:str) -> str:
 
     location = tables[1].find_all('tr')[0].find('td').text.split(' > ')
     print(f"location: {location}")
-    if len(location) > 1:
-        region_oblast = ",".join([location[1], location[2][:-2]])
+    if len(location) > 2:
+        region_oblast = ",".join([location[1], location[2][:-1]])
+    elif len(location) > 1:
+        region_oblast = ",".join([location[1][:-1], location[1][:-1]])
     else:
         region_oblast = "N/A"
     oblast_csv = '\n'.join([','.join([cav[0],cav[1],region_oblast]) for cav in candidates_and_votes])+'\n'
@@ -76,27 +78,32 @@ def get_election_data():
 
     dropdown_regions = driver.find_element_by_name('gs')
     election_regions = dropdown_regions.find_elements_by_tag_name('option')
-    for k in range(1,len(election_regions)):
+
+    for k in range(1, len(election_regions)):
         dropdown_regions = driver.find_element_by_name('gs')
         election_regions = dropdown_regions.find_elements_by_tag_name('option')
         # navigate to the page with data for the region
         election_regions[k].click()
         select_button = driver.find_element_by_name('go')
         select_button.click()
-
-        dropdown_oblast = driver.find_element_by_name('gs')
-        election_oblast = dropdown_oblast.find_elements_by_tag_name('option')
-
-        for i in range(1,len(election_oblast)):
+    
+        try:
             dropdown_oblast = driver.find_element_by_name('gs')
             election_oblast = dropdown_oblast.find_elements_by_tag_name('option')
-            # navigate to the page for an oblast in that city
-            election_oblast[i].click()
-            select_button = driver.find_element_by_name('go')
-            select_button.click()
+
+            for i in range(1, len(election_oblast)):
+                dropdown_oblast = driver.find_element_by_name('gs')
+                election_oblast = dropdown_oblast.find_elements_by_tag_name('option')
+                # navigate to the page for an oblast in that city
+                election_oblast[i].click()
+                select_button = driver.find_element_by_name('go')
+                select_button.click()
+                oblast_data = get_vote_counts(driver.page_source)
+                save_csv(oblast_data, 'data/2018-Russia-election-data.txt')
+                driver.back()
+        except NoSuchElementException:
             oblast_data = get_vote_counts(driver.page_source)
             save_csv(oblast_data, 'data/2018-Russia-election-data.txt')
-            driver.back()
         driver.back()
 
     driver.quit()
