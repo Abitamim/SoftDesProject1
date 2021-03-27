@@ -25,8 +25,11 @@ def get_vote_counts(page_html:str) -> str:
     candidates_and_votes = [separate_candidate_votes_regex.match(cav).groups() for cav in candidates_and_votes]
 
     location = tables[1].find_all('tr')[0].find('td').text.split(' > ')
-    region_oblast = ",".join([location[1], location[2][:-2]])
-
+    print(f"location: {location}")
+    if len(location) > 1:
+        region_oblast = ",".join([location[1], location[2][:-2]])
+    else:
+        region_oblast = "N/A"
     oblast_csv = '\n'.join([','.join([cav[0],cav[1],region_oblast]) for cav in candidates_and_votes])+'\n'
 
     return oblast_csv
@@ -42,7 +45,7 @@ def save_csv(votes_data, path):
         path: a string representing the name of the path to the file to store
         the data
     '''
-    file = open(path, 'a')
+    file = open(path, 'a', encoding='utf-8')
     if stat(path).st_size == 0:
         file.write('candidate, votes, region, oblast\n')
     file.write(votes_data)
@@ -57,7 +60,7 @@ def get_election_data():
     url = 'http://www.vybory.izbirkom.ru/region/izbirkom?action=show&root_a=null&vrn=100100084849062&region=0&global=true&type=0&prver=0&pronetvd=null'
 
     # Using Chrome version 89 and chromedriver version 89 (important that they match)
-    driver = webdriver.Chrome("/home/softdes/Downloads/ChromeDriver/chromedriver")
+    driver = webdriver.Chrome()
 
     driver.get(url)
     # 20 seconds to manually enter code to proceed
@@ -91,7 +94,6 @@ def get_election_data():
             election_oblast[i].click()
             select_button = driver.find_element_by_name('go')
             select_button.click()
-            time.sleep(.5)
             oblast_data = get_vote_counts(driver.page_source)
             save_csv(oblast_data, 'data/2018-Russia-election-data.txt')
             driver.back()
