@@ -115,11 +115,11 @@ def get_election_data():
                 select_button = driver.find_element_by_name("go")
                 select_button.click()
                 oblast_data = get_vote_counts(driver.page_source)
-                save_csv(oblast_data, "data/2018-Russia-election-data.txt")
+                save_csv(oblast_data, "data/2018-Russia-election-data.csv")
                 driver.back()
         except NoSuchElementException:
             oblast_data = get_vote_counts(driver.page_source)
-            save_csv(oblast_data, "data/2018-Russia-election-data.txt")
+            save_csv(oblast_data, "data/2018-Russia-election-data.csv")
         driver.back()
 
     driver.quit()
