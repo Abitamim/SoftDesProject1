@@ -16,10 +16,17 @@ from bs4 import BeautifulSoup
 
 def get_vote_counts(page_html: str) -> str:
     """
-    docstring here
+    Takes the html source of the page with vote counts and collects all of the
+    votes for each candidate from that page into a string to be put into a csv
+    file.
 
     Args:
+        page_html: a string representing the html page source containing the
+        vote counts.
     Returns:
+        A string of data representing the vote counts for each candidate in each
+        region and district to be put into a csv file. The data is formatted as
+        follows: candidate, votes, region, oblast
     """
 
     soup = BeautifulSoup(page_html)
@@ -51,7 +58,7 @@ def get_vote_counts(page_html: str) -> str:
     return oblast_csv
 
 
-def save_csv(votes_data, path):
+def save_csv(votes_data:str, path:str):
     """
     Adds a string of data to the end of a csv file.
 
@@ -70,7 +77,9 @@ def save_csv(votes_data, path):
 
 def get_election_data():
     """
-    doctring here
+    Iterates through a website containing the election data for the Russia 2018
+    Presidential Election, grabs the votes for each candidate in each region,
+    and stored that data in a csv file.
     """
 
     url = "http://www.vybory.izbirkom.ru/region/izbirkom?action=show& \
