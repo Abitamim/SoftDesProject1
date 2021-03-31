@@ -17,8 +17,9 @@ def get_vote_counts(driver) -> str:
         str: csv formatted in this format: candidate, votes, "county, state"
     """
     candidates = [
-        x.text for x in driver.find_elements_by_class_name("name")[::3]
+        x.text.replace(',', ' ') for x in driver.find_elements_by_class_name("name")[::3]
     ]
+    
     votes = [
         int(x.text.replace(",", ""))
         for x in driver.find_elements_by_class_name("num")[::2]
