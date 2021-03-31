@@ -50,7 +50,7 @@ def get_vote_counts(page_html: str) -> str:
         region_oblast = "N/A"
     oblast_csv = (
         "\n".join(
-            [",".join([cav[0], cav[1], region_oblast]) for cav in candidates_and_votes]
+            [re.sub('(,[^,]*),', r'\1 ', ",".join([cav[0], cav[1], region_oblast])) for cav in candidates_and_votes]
         )
         + "\n"
     )
