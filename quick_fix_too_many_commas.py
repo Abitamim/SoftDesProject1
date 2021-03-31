@@ -7,7 +7,7 @@ for line in file:
         text += new_line
     else:
         text+=(line)
+file.close()
 x = open("data/2018-Russia-election-data.csv", "w", encoding="utf-8")
 x.writelines(text)
 x.close()
-file.close()
