@@ -58,7 +58,7 @@ def get_vote_counts(page_html: str) -> str:
     return oblast_csv
 
 
-def save_csv(votes_data:str, path:str):
+def save_csv(votes_data:str, path:str, column_names:str):
     """
     Adds a string of data to the end of a csv file.
 
@@ -67,10 +67,12 @@ def save_csv(votes_data:str, path:str):
         'candidate, votes, city, oblast'.
         path: a string representing the name of the path to the file to store
         the data
+        column_names: a string representing the titles of each column in the csv
+        file separated by a comma, for example 'candidate,votes,region,oblast'
     """
     file = open(path, "a", encoding="utf-8")
     if stat(path).st_size == 0:
-        file.write("candidate,votes,region,oblast\n")
+        file.write(f"{column_names}+\n")
     file.write(votes_data)
     file.close()
 
@@ -124,11 +126,11 @@ def get_election_data():
                 select_button = driver.find_element_by_name("go")
                 select_button.click()
                 oblast_data = get_vote_counts(driver.page_source)
-                save_csv(oblast_data, "data/2018-Russia-election-data.csv")
+                save_csv(oblast_data, "data/2018-Russia-election-data.csv",'candidate,votes,region,oblast')
                 driver.back()
         except NoSuchElementException:
             oblast_data = get_vote_counts(driver.page_source)
-            save_csv(oblast_data, "data/2018-Russia-election-data.csv")
+            save_csv(oblast_data, "data/2018-Russia-election-data.csv",'candidate,votes,region,oblast')
         driver.back()
 
     driver.quit()

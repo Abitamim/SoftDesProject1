@@ -40,17 +40,19 @@ def get_vote_counts(driver) -> str:
     )
 
 
-def save_csv(vote_data: str, file_path: str):
+def save_csv(vote_data: str, file_path: str, column_names:str):
     """
     Adds csv data at end of provided file.
 
     Args:
         vote_data (str): formatted csv data to save
         file (str): file to store data in
+        column_names: a string representing the titles of each column in the csv
+        file separated by a comma, for example 'candidate,votes,county,state'
     """
     file = open(file_path, "a")
     if stat(file_path).st_size == 0:
-        file.write("candidate,votes,county,state\n")
+        file.write(f"{column_names}+\n")
     file.write(vote_data)
     file.close()
 
@@ -83,7 +85,7 @@ def get_data_for_states():
                 input_button = driver.find_element_by_name("submit")
                 input_button.click()
                 county_data = get_vote_counts(driver)
-                save_csv(county_data, "data/2020-elections-data.csv")
+                save_csv(county_data, "data/2020-elections-data.csv",'candidate,votes,county,state')
                 driver.back()
 
 
