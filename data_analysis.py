@@ -62,3 +62,22 @@ def data_to_percentage(data_list: pd.Series):
         (number_of_occurrences.index > 0) & (number_of_occurrences.index < 10)
     ]
     return number_of_occurrences.multiply(100 / sum(number_of_occurrences))
+
+def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
+    """[summary]
+
+    Args:
+        data (pd.DataFrame): [description]
+
+    Returns:
+        pd.DataFrame: [description]
+    """    
+    candidate_votes = {}
+    for row in data.itertuples(index=False):
+        candidate = row[0]
+        votes = row[1]
+        if candidate not in data:
+            candidate_votes[candidate] = votes
+        else:
+            candidate_votes[candidate] += votes
+    return pd.DataFrame(data)
