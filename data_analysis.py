@@ -72,12 +72,16 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: [description]
     """    
-    candidate_votes = {}
+    candidate_votes = ""
     for row in data.itertuples(index=False):
-        candidate = row[0]
-        votes = row[1]
+        candidate = str(row[0])
+        votes = str(row[1])
         if candidate not in data:
             candidate_votes[candidate] = votes
         else:
             candidate_votes[candidate] += votes
-    return pd.DataFrame(data)
+    return pd.DataFrame(candidate_votes)
+
+us_data = csv_to_dataframe('data/2020-elections-data.csv')
+x = per_candidate_votes(us_data)
+print(x)
