@@ -86,18 +86,17 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
 #x = per_candidate_votes(us_data)
 #print(x)
 
-def get_votes_by_region(data: pd.DataFrame, region_column_name:str, votes_column_name:str):
+def get_votes_by_region(data: pd.DataFrame)-> pd.DataFrame:
     '''
     Get all of the votes for each region or county and place it into
-    a dataframe sorted by each county or region.
+    a dataframe sorted by each county or region. 
+
+    This code works assuming that the votes are in the 2nd column (index=1)
+    and the region name is in column 3 (index = 2).
 
     Args: 
         data: a pandas DataFrame containing all of the election data for a
         country.
-        region_column_name: a string representing the name of the column
-        containing the name of the column containing the names of the regions.
-        votes_column_name: a string representing the name of the column
-        containing the number of votes.
 
     Returns: 
         A pandas DataFrame containing all of the votes sorted by each region
@@ -108,12 +107,14 @@ def get_votes_by_region(data: pd.DataFrame, region_column_name:str, votes_column
     #a temporary list to store the votes for one region as the DataFrame
     #is iterated through
     one_region_votes = []
-    current_region = data[region_column_name][0]
-    for row in data.itertuples():
-        if row[index] != current_region:
+    #get the name of the first region in the dataframe
+    current_region = data[0][2]
+
+    for row in data.itertuples(index = False):
+        if row[2] != current_region:
             region_votes[current_region] = one_region_votes
-            current_region = row[index]
+            current_region = row[2]
             one_region_votes.clear()
-        one_region_votes = row[votes_column_name[index]]
+        one_region_votes = row[1]
     
     return pd.DataFrame(region_votes)
