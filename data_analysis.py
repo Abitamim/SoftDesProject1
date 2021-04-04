@@ -18,7 +18,7 @@ def csv_to_dataframe(csv_filepath: str):
     return pd.read_csv(f"{csv_filepath}")
 
 
-def find_all_leading_digits(dataframe, leading_digit: int, column_name: str):
+def find_all_leading_digits(column, leading_digit: int):
     """
     Takes data from a given csv file and finds all of the specified leading
     digits in the given column and returns the leadings digits in a list. Note
@@ -26,11 +26,10 @@ def find_all_leading_digits(dataframe, leading_digit: int, column_name: str):
     apply to 0s, thus only values 1-9 will be returned.
 
     Args: 
-        dataframe: a dataframe containing the election data
+        column: a single column from a dataframe containing the election votes
         leading_digit: an integer representing which leading digit to grab, such
         as the 1st leading digit.
-        column_name: a string representing the column in the csv file that
-        contains the integers to find the leading digit of. 
+        
     Returns: 
         A list of integers containing all leading digits in the given column of
         the csv file. 
@@ -38,7 +37,7 @@ def find_all_leading_digits(dataframe, leading_digit: int, column_name: str):
     return pd.Series(
         [
             int(str(vote)[leading_digit - 1])
-            for vote in dataframe[f"{column_name}"]
+            for vote in column
             if int(str(vote)[leading_digit - 1]) != 0
         ]
     )
@@ -106,15 +105,15 @@ def get_votes_by_region(data: pd.DataFrame)-> pd.DataFrame:
     region_votes = {}
     #a temporary list to store the votes for one region as the DataFrame
     #is iterated through
-    one_region_votes = []
+    one_region_votes = ''
     #get the name of the first region in the dataframe
-    current_region = data[0][2]
+    current_region = data.iloc[0,3]
 
     for row in data.itertuples(index = False):
-        if row[2] != current_region:
-            region_votes[current_region] = one_region_votes
-            current_region = row[2]
-            one_region_votes.clear()
-        one_region_votes = row[1]
+        if row[3] != current_region:
+            region_votes[current_region] = one_region_votes.split(',')
+            current_region = row[3]
+            one_region_votes = ''
+        one_region_votes+=str(row[1])+','
     
     return pd.DataFrame(region_votes)
