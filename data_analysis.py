@@ -73,17 +73,17 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
     """    
     candidate_votes = {}
     for row in data.itertuples(index=False):
-        candidate = str(row[0])
-        votes = str(row[1])
-        if candidate not in data:
-            candidate_votes[candidate] = votes
+        candidate = row[0]
+        votes = row[1]
+        if candidate not in candidate_votes:
+            candidate_votes[candidate] = [votes]
         else:
-            candidate_votes[candidate] += votes
-    return pd.DataFrame(candidate_votes)
+            candidate_votes[candidate].append(votes)
+    return pd.DataFrame({index: pd.Series(value) for index, value in candidate_votes.items()})
 
-#us_data = csv_to_dataframe('data/2020-elections-data.csv')
-#x = per_candidate_votes(us_data)
-#print(x)
+# us_data = csv_to_dataframe('data/2020-elections-data.csv')
+# x = per_candidate_votes(us_data)
+# print(x)
 
 def get_votes_by_region(data: pd.DataFrame)-> pd.DataFrame:
     '''
