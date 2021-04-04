@@ -72,7 +72,7 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: [description]
     """    
-    candidate_votes = ""
+    candidate_votes = {}
     for row in data.itertuples(index=False):
         candidate = str(row[0])
         votes = str(row[1])
@@ -82,6 +82,38 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
             candidate_votes[candidate] += votes
     return pd.DataFrame(candidate_votes)
 
-us_data = csv_to_dataframe('data/2020-elections-data.csv')
-x = per_candidate_votes(us_data)
-print(x)
+#us_data = csv_to_dataframe('data/2020-elections-data.csv')
+#x = per_candidate_votes(us_data)
+#print(x)
+
+def get_votes_by_region(data: pd.DataFrame, region_column_name:str, votes_column_name:str):
+    '''
+    Get all of the votes for each region or county and place it into
+    a dataframe sorted by each county or region.
+
+    Args: 
+        data: a pandas DataFrame containing all of the election data for a
+        country.
+        region_column_name: a string representing the name of the column
+        containing the name of the column containing the names of the regions.
+        votes_column_name: a string representing the name of the column
+        containing the number of votes.
+
+    Returns: 
+        A pandas DataFrame containing all of the votes sorted by each region
+        or country.
+    '''
+    #dictionary to store all the votes for each region or county
+    region_votes = {}
+    #a temporary list to store the votes for one region as the DataFrame
+    #is iterated through
+    one_region_votes = []
+    current_region = data[region_column_name][0]
+    for row in data.itertuples():
+        if row[index] != current_region:
+            region_votes[current_region] = one_region_votes
+            current_region = row[index]
+            one_region_votes.clear()
+        one_region_votes = row[votes_column_name[index]]
+    
+    return pd.DataFrame(region_votes)
