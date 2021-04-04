@@ -38,12 +38,12 @@ def find_all_leading_digits(column, leading_digit: int):
         [
             int(str(vote)[leading_digit - 1])
             for vote in column
-            if int(str(vote)[leading_digit - 1]) != 0
+            if str(vote)[leading_digit - 1] in ("123456789")
         ]
     )
 
 
-def data_to_percentage(data_list: pd.Series):
+def data_to_percentage(data_list: pd.Series) -> pd.Series:
     """
     Takes a list of integer data and returns a list of percentages corresponding
     to the number of times the numbers 1-9 appear in the list.
@@ -60,7 +60,7 @@ def data_to_percentage(data_list: pd.Series):
     number_of_occurrences = number_of_occurrences[
         (number_of_occurrences.index > 0) & (number_of_occurrences.index < 10)
     ]
-    return number_of_occurrences.multiply(100 / sum(number_of_occurrences))
+    return number_of_occurrences.multiply(100 / sum(number_of_occurrences)).sort_index()
 
 def get_votes_per_parameter(data: pd.DataFrame, column_index: int) -> pd.DataFrame:
     """
@@ -91,6 +91,16 @@ def get_votes_per_parameter(data: pd.DataFrame, column_index: int) -> pd.DataFra
             item_votes[item].append(votes)
     return pd.DataFrame({index: pd.Series(value) for index, value in item_votes.items()})
 
-#us_data = csv_to_dataframe('data/2018-Russia-election-data.csv')
-#x = per_item_votes(us_data)
-#print(x)
+import matplotlib.pyplot as plt
+us_data = csv_to_dataframe('data/2020-elections-data.csv')
+us_states_data = get_votes_per_parameter(us_data, 3)
+#us_states_leadings_digits = helper.find_all_leading_digits(us_states_data,1,)
+print(us_states_data.columns)
+#states_percentages = [helper.data_to_percentage(us_states_leadings_digits, state_names)]
+fig,axis = plt.subplots(nrows = 1, ncols = 1)
+for state in us_states_data.columns: 
+    state_leading_digits = find_all_leading_digits(us_states_data[state],1)
+    state_percentages = data_to_percentage(state_leading_digits)
+    axis.plot(state_percentages.index, state_percentages,'.')
+    print(state)
+    plt.show()
