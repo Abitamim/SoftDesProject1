@@ -62,58 +62,35 @@ def data_to_percentage(data_list: pd.Series):
     ]
     return number_of_occurrences.multiply(100 / sum(number_of_occurrences))
 
-def per_unique_data_point_votes(data: pd.DataFrame, column_index: int) -> pd.DataFrame:
-    """[summary]
-
-    Args:
-        data (pd.DataFrame): [description]
-
-    Returns:
-        pd.DataFrame: [description]
-    """    
-    candidate_votes = {}
-    for row in data.itertuples(index=False):
-        candidate = row[column_index]
-        votes = row[1]
-        if candidate not in candidate_votes:
-            candidate_votes[candidate] = [votes]
-        else:
-            candidate_votes[candidate].append(votes)
-    return pd.DataFrame({index: pd.Series(value) for index, value in candidate_votes.items()})
-
-us_data = csv_to_dataframe('data/2018-Russia-election-data.csv')
-x = per_candidate_votes(us_data)
-print(x)
-
-def get_votes_by_region(data: pd.DataFrame)-> pd.DataFrame:
-    '''
-    Get all of the votes for each region or county and place it into
-    a dataframe sorted by each county or region. 
+def get_votes_per_parameter(data: pd.DataFrame, column_index: int) -> pd.DataFrame:
+    """
+    Get all of the votes for each region, county, candidate, or other parameter
+    and store the data in a dataframe.
 
     This code works assuming that the votes are in the 2nd column (index=1)
-    and the region name is in column 3 (index = 2).
 
     Args: 
         data: a pandas DataFrame containing all of the election data for a
         country.
+        column_index: an integer representing the index of the column containing
+        the parameter to sort the votes by. For example, to get the votes sorted
+        by state for the US election, the index should be 3 because the names of
+        the states are located in the dataframe in that index.
 
     Returns: 
-        A pandas DataFrame containing all of the votes sorted by each region
-        or country.
-    '''
-    #dictionary to store all the votes for each region or county
-    region_votes = {}
-    #a temporary list to store the votes for one region as the DataFrame
-    #is iterated through
-    one_region_votes = ''
-    #get the name of the first region in the dataframe
-    current_region = data.iloc[0,3]
+        A pandas DataFrame containing all of the votes sorted by the chosen
+        parameter.
+    """    
+    item_votes = {}
+    for row in data.itertuples(index=False):
+        item = row[column_index]
+        votes = row[1]
+        if item not in item_votes:
+            item_votes[item] = [votes]
+        else:
+            item_votes[item].append(votes)
+    return pd.DataFrame({index: pd.Series(value) for index, value in item_votes.items()})
 
-    for row in data.itertuples(index = False):
-        if row[3] != current_region:
-            region_votes[current_region] = one_region_votes.split(',')
-            current_region = row[3]
-            one_region_votes = ''
-        one_region_votes+=str(row[1])+','
-    
-    return pd.DataFrame(region_votes)
+#us_data = csv_to_dataframe('data/2018-Russia-election-data.csv')
+#x = per_item_votes(us_data)
+#print(x)
