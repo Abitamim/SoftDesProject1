@@ -62,7 +62,7 @@ def data_to_percentage(data_list: pd.Series):
     ]
     return number_of_occurrences.multiply(100 / sum(number_of_occurrences))
 
-def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
+def per_unique_data_point_votes(data: pd.DataFrame, column_index: int) -> pd.DataFrame:
     """[summary]
 
     Args:
@@ -73,7 +73,7 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
     """    
     candidate_votes = {}
     for row in data.itertuples(index=False):
-        candidate = row[0]
+        candidate = row[column_index]
         votes = row[1]
         if candidate not in candidate_votes:
             candidate_votes[candidate] = [votes]
@@ -81,9 +81,9 @@ def per_candidate_votes(data: pd.DataFrame) -> pd.DataFrame:
             candidate_votes[candidate].append(votes)
     return pd.DataFrame({index: pd.Series(value) for index, value in candidate_votes.items()})
 
-# us_data = csv_to_dataframe('data/2020-elections-data.csv')
-# x = per_candidate_votes(us_data)
-# print(x)
+us_data = csv_to_dataframe('data/2018-Russia-election-data.csv')
+x = per_candidate_votes(us_data)
+print(x)
 
 def get_votes_by_region(data: pd.DataFrame)-> pd.DataFrame:
     '''
