@@ -3,7 +3,7 @@ Contains helper functions for analyzing the election data.
 """
 
 import pandas as pd
-
+import numpy as np
 
 def csv_to_dataframe(csv_filepath: str):
     """
@@ -91,16 +91,34 @@ def get_votes_per_parameter(data: pd.DataFrame, column_index: int) -> pd.DataFra
             item_votes[item].append(votes)
     return pd.DataFrame({index: pd.Series(value) for index, value in item_votes.items()})
 
-import matplotlib.pyplot as plt
-us_data = csv_to_dataframe('data/2020-elections-data.csv')
-us_states_data = get_votes_per_parameter(us_data, 3)
-#us_states_leadings_digits = helper.find_all_leading_digits(us_states_data,1,)
-print(us_states_data.columns)
-#states_percentages = [helper.data_to_percentage(us_states_leadings_digits, state_names)]
-fig,axis = plt.subplots(nrows = 1, ncols = 1)
-for state in us_states_data.columns: 
-    state_leading_digits = find_all_leading_digits(us_states_data[state],1)
-    state_percentages = data_to_percentage(state_leading_digits)
-    axis.plot(state_percentages.index, state_percentages,'.')
-    print(state)
-    plt.show()
+def find_std_dev_to_ideal(gathered_data: pd.Series) -> float:
+    """[summary]
+
+    Args:
+        gathered_data (pd.Series): Values must be in percentage terms
+
+    Raises:
+        Exception: [description]
+
+    Returns:
+        float: [description]
+    """    
+    theoretical_data = get_theoretical_benford_law_values()
+    rms_sum = 0
+    for data_index in gathered_data.index:
+        if data_index not in theoretical_data.index:
+            raise Exception("Please have only 1-9 in your index.")
+        else:
+            rms_sum += (theoretical_data[data_index] - gathered_data[data_index]) ** 2
+            
+    return (rms_sum / gathered_data.size) ** .5
+
+def get_theoretical_benford_law_values(num_values = 9) -> pd.Series:
+    theoretical_x_values = np.linspace(1, 9, num_values)
+    theoretical_y_values = np.log10(1 + 1 / theoretical_x_values) * 100
+    return pd.Series(theoretical_y_values, index = theoretical_x_values)
+
+def sum_votes(data: pd.DataFrame, column_index: int) -> pd.DataFrame:
+    votes = get_votes_per_parameter(data, column_index)
+    return pd.DataFrame({index: value.sum() for index, value in votes.items()}, index=[0])
+
