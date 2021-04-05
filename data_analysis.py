@@ -114,11 +114,39 @@ def find_std_dev_to_ideal(gathered_data: pd.Series) -> float:
     return (rms_sum / gathered_data.size) ** .5
 
 def get_theoretical_benford_law_values(num_values = 9) -> pd.Series:
+    '''
+docstring here
+'''
     theoretical_x_values = np.linspace(1, 9, num_values)
     theoretical_y_values = np.log10(1 + 1 / theoretical_x_values) * 100
     return pd.Series(theoretical_y_values, index = theoretical_x_values)
 
 def sum_votes(data: pd.DataFrame, column_index: int) -> pd.DataFrame:
+    '''
+    docstring here
+    '''
     votes = get_votes_per_parameter(data, column_index)
     return pd.DataFrame({index: value.sum() for index, value in votes.items()}, index=[0])
+
+def find_std_dev(votes_data: pd.DataFrame, region_index:int):
+    '''
+    docstring here
+    votes_data: dataframe containing all votes for a country 
+    region_index: int representing the index where all the region names are located
+
+    '''
+
+    benford_law_ideal = get_theoretical_benford_law_values()
+    standard_dev = {}
+    region_percentages = pd.DataFrame()
+
+    region_votes = get_votes_per_parameter(votes_data, region_index)
+    for region in votes_data.columns:
+        region_leading_digits = find_all_leading_digits(region_votes.iloc[:,region],1)
+        region_percentages = data_to_percentage(region_leading_digits)
+
+    
+
+
+
 
