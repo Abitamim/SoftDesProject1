@@ -182,11 +182,11 @@ valuein min_range and max_range respectively.
 
 def find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series, pd.Series, pd.Series): 
     """
-Finds the mean, std. dev., and values that are 1.96 std. dev. below and above
-the mean
+Finds the mean and std. dev. for each row, and the values that are 1.96 std. dev. below and above
+the mean.
 
     Args:
-        data (pd.DataFrame): [description]
+        data (pd.DataFrame):  
     
     Returns:
         pd ([type]): [description]
