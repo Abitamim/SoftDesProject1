@@ -51,20 +51,6 @@ def plot_ideal_benfords_law_curve(num_values: int, color: str = "black", thickne
     plt.plot(ideal_values.index, ideal_values, color=color,
              linewidth=thickness, label="Benford's Law Curve")
 
-
-def csv_to_dataframe(csv_filepath: str) -> pd.DataFrame:
-    """
-    Takes a csv file and turns it into a dataframe.
-
-    Args: 
-        csv_filepath: a string representing the path to the csv file containing
-        all of the election data.
-    Returns:
-        a dataframe containing all of the data from a given csv file. 
-    """
-    return pd.read_csv(f"{csv_filepath}")
-
-
 def find_all_leading_digits(data: pd.DataFrame, column_name: str = None, leading_digit: int = 1, threshold: int = 0) -> pd.DataFrame:
     """
     Takes data from a given csv file and finds all of the specified leading
@@ -151,9 +137,18 @@ dataframe with the percentages corresponding to the number of times the numbers 
 
 
 def get_theoretical_benford_law_values(num_values: int = 9) -> pd.Series:
-    '''
-docstring here
-'''
+    """
+Generates a Series with the index being the x values of the Benford's law curve
+and the values being the y values of the curve.
+
+    Args:
+        num_values (int, optional): If value lower than 9 is given, it is set to 9. Defaults to 9.
+
+    Returns:
+        pd.Series: [description]
+    """    
+    if num_values < 9:
+        num_values = 9
     theoretical_x_values = np.linspace(1, 9, num_values)
     theoretical_y_values = np.log10(1 + 1 / theoretical_x_values) * 100
     return pd.Series(theoretical_y_values, index=theoretical_x_values)
