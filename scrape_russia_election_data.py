@@ -92,7 +92,7 @@ def get_election_data():
     driver = webdriver.Chrome()
 
     driver.get(url)
-    # 20 seconds to manually enter code to proceed
+    # 10 seconds to manually enter code to proceed
     time.sleep(10)
 
     # wait until page loads, then select the page with the table of data
