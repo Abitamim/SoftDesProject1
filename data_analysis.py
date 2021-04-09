@@ -11,8 +11,7 @@ def plot_subplots_bar(
     mean_label: str,
     values_outside_std_dev: list,
     mean: pd.Series,
-    min_val: pd.Series,
-    max_val: pd.Series,
+    edge_value: tuple,
     bar_colors: list,
 ) -> None:
     """
@@ -26,28 +25,30 @@ def plot_subplots_bar(
         deviations away from the mean.
         mean (pd.Series): a pandas Series containing all of the means for a
         country for each digit.
-        min_val (pd.Series): a pandas Series representing the values 1.96
-        standard deviations below the mean for each digit.
-        max_val (pd.Series): a pandas Series representing the values 1.96
-        standard deviations above the mean for each digit.
+        edge_value(tuple): a tuple containing the following:
+            min_val: a pandas Series representing the values 1.96
+            standard deviations below the mean for each digit.
+            max_val: a pandas Series representing the values 1.96
+            standard deviations above the mean for each digit.
         bar_colors (list): A list of strings with two colors, such as 'green'
         and 'blue'. The first color is used for the country mean, and the
         second color is used for the regions or states that are outside of
         the given range.
     """
-    x = np.linspace(-1, 10, 100)
-    fig, axs = plt.subplots(3, 3, figsize=(20, 20))
-    for i, ax in enumerate(fig.axes):
-        ax.set_xlim([-0.5, 5])
-        ax.set_title(f"Leading Digit: {i + 1}")
-        ax.bar(mean_label, mean[i + 1], color=bar_colors[0])
-        ax.plot(x, [max_val[i + 1]] * len(x))
-        ax.plot(x, [min_val[i + 1]] * len(x))
+    min_val, max_val = edge_value
+    x_values = np.linspace(-1, 10, 100)
+    fig, _axis = plt.subplots(3, 3, figsize=(20, 20))
+    for i, plot in enumerate(fig.axes):
+        plot.set_xlim([-0.5, 5])
+        plot.set_title(f"Leading Digit: {i + 1}")
+        plot.bar(mean_label, mean[i + 1], color=bar_colors[0])
+        plot.plot(x_values, [max_val[i + 1]] * len(x_values))
+        plot.plot(x_values, [min_val[i + 1]] * len(x_values))
         for area, digit, value in values_outside_std_dev:
             if digit == (i + 1):
-                ax.bar(area, value, color=bar_colors[1])
-        ax.margins(0, 0)
-        plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+                plot.bar(area, value, color=bar_colors[1])
+        plot.margins(0, 0)
+        plt.setp(plot.get_xticklabels(), rotation=30, ha="right")
         plt.subplots_adjust(
             left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.4, hspace=0.4
         )
@@ -55,9 +56,9 @@ def plot_subplots_bar(
 
 def plot_labels(x_label: str = None, y_label: str = None, title: str = None):
     """
-    Adds title and labels to a plot. 
+    Adds title and labels to a plot.
 
-    Args: 
+    Args:
         x_label: a string representing the x-axis title
         y_label: a string representing the y-axis title
         title: a string representing the title of the chosen plot
@@ -78,7 +79,7 @@ def plot_ideal_benfords_law_curve(
 
     Args:
         num_values: an integer representing the number of time steps. Will
-        default to nine if a number greater than 9 is given.
+        default to nine if a number less than 9 is given.
     """
     ideal_values = get_theoretical_benford_law_values(num_values)
     plt.plot(
@@ -96,27 +97,27 @@ def find_all_leading_digits(
     threshold: int = 0,
 ) -> pd.DataFrame:
     """
-    Takes data from a given csv file and finds all of the specified leading
-    digits in the "votes" column and returns the leading digits of each
-    category in a Series.
-    Note
-    that any leading digits that are 0 will be removed as Benford's law does not
-    apply to 0s, thus only values 1-9 will be returned.
+        Takes data from a given csv file and finds all of the specified leading
+        digits in the "votes" column and returns the leading digits of each
+        category in a Series.
+        Note
+        that any leading digits that are 0 will be removed as Benford's law does not
+        apply to 0s, thus only values 1-9 will be returned.
 
-    Args: 
-        data: (DataFrame) A dataframe with the data. Must have one column with
-        the name "votes" and if trying to find leading digit for categories in
-        certain column, must also have column_name.
-        column_name: (str) a single column from a dataframe containing the name
-        of the column to find the leading digit of each unique category within
-        or None if trying to find leading digit from entire dataframe.
-        threshold: integer representing the minimum number of discrete numbers
-        in the votes column for a category to be included in the return
-        dataframe
+        Args:
+            data: (DataFrame) A dataframe with the data. Must have one column with
+            the name "votes" and if trying to find leading digit for categories in
+            certain column, must also have column_name.
+            column_name: (str) a single column from a dataframe containing the name
+            of the column to find the leading digit of each unique category within
+            or None if trying to find leading digit from entire dataframe.
+            threshold: integer representing the minimum number of discrete numbers
+            in the votes column for a category to be included in the return
+            dataframe
 
-    Returns: 
-A pandas dataframe of integers containing all leading digits in the given column of
-        the csv file. 
+        Returns:
+    A pandas dataframe of integers containing all leading digits in the given column of
+            the csv file.
     """
     if column_name:
         dfs = get_vote_by_category(data, column_name, threshold)
@@ -156,12 +157,12 @@ def get_vote_by_category(
         date (pd.DataFrame): a pandas DataFrame containing the data with the
         votes.
         column_name (str): a string representing the name of the column that
-        will be used to sort through the votes. 
+        will be used to sort through the votes.
         threshold: integer representing the minimum number of discrete numbers
         in the votes column for a category to be included in the return
         dataframe
 
-    Returns: 
+    Returns:
         dict: A dictionary will categories as keys and dataframes and the rows
         belonging to them in data as a Series with the votes.
     """
@@ -178,15 +179,15 @@ def data_to_percentage(data_list: pd.DataFrame) -> pd.DataFrame:
     dataframe with the percentages corresponding to the number of times the
     numbers 1-9 appear in each column.
 
-    Args: 
+    Args:
         data_list: a dataframe of integers representing all of the leading
         digits from a dataset (in this case, the number of vote counts).
         Each columns is a category and is a Series with digits.
         threshold: (int) minimum number of integers in column for percentage
         to be found in it and for it to be returned.
 
-    Returns: 
-        returns a dataframe of Series with the percentages of each column that 
+    Returns:
+        returns a dataframe of Series with the percentages of each column that
         are each unique number in that column. Any numbers outside of [1, 9] are
         not included and any column with fewer unique digits than another column
         is dropped.
@@ -212,7 +213,7 @@ def get_theoretical_benford_law_values(num_values: int = 9) -> pd.Series:
 
     Args:
         num_values (int, optional): an integer representing the number of time
-        steps. Will default to nine if a number greater than 9 is given.
+        steps. Will default to nine if a number less than 9 is given.
 
     Returns:
         A pandas DataFrame containing the theoretical Benford's law distribution
@@ -252,8 +253,9 @@ def find_values_outside_range(
     return_list = []
     for column in data_boolean:
         for index, element in data_boolean[column].iteritems():
-            #The second comparison ensures no np.NaN values get added to a tuple.
-            if False in element and data[column][index] == data[column][index]: 
+            # The second comparison ensures no np.NaN values get added to a
+            # tuple.
+            if False in element and data[column][index] == data[column][index]:
                 return_list.append((column, index, data[column][index]))
 
     return return_list
@@ -269,7 +271,7 @@ def find_std_dev_range(
     Args:
         data (pd.DataFrame): a pandas DataFrame containing the column with the
         votes data. There must be exactly 9 rows in the DataFrame.
-    
+
     Returns:
         Four pandas Series containing the mean, standard deviation, maximum
         values, and minimum values.The maximum and minimum values represent the
