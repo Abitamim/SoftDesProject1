@@ -274,8 +274,6 @@ def find_std_dev_range(
         values, and minimum values.The maximum and minimum values represent the
         votes that are above or below 1.96 standard deviations from the mean.
     """
-    if len(data.index) != 9:
-        return None, None, None, None
     means = data.mean(axis=1)
     std_devs = data.std(axis=1, ddof=0)
     max_vals = pd.Series(
