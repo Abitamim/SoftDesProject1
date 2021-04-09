@@ -22,7 +22,9 @@ get_ideal_benfords = [
     (
         [],
         pd.Series(
-            np.array([30.1, 17.609, 12.494, 9.691, 7.918, 6.694, 5.799, 5.115, 4.575]),
+            np.array(
+                [30.1, 17.609, 12.494, 9.691, 7.918, 6.694, 5.799, 5.115, 4.575]
+            ),
             index=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
         ),
     ),
@@ -74,7 +76,9 @@ get_ideal_benfords = [
     (
         [8],
         pd.Series(
-            np.array([30.1, 17.609, 12.494, 9.691, 7.918, 6.694, 5.799, 5.115, 4.575]),
+            np.array(
+                [30.1, 17.609, 12.494, 9.691, 7.918, 6.694, 5.799, 5.115, 4.575]
+            ),
             index=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
         ),
     ),
@@ -135,10 +139,11 @@ find_all_leading_digits_cases = [
     ),
 ]
 
-# get_vote_by_category(data: pd.DataFrame, column_name: str, threshold: int = 0)
+# get_vote_by_category(data: pd.DataFrame, column_name: str, threshold:
+# int = 0)
 get_vote_by_category_cases = [
     # Check that a dataFrame with 2 categories returns two columns with the
-    #'votes' for each category
+    # 'votes' for each category
     (
         pd.DataFrame(
             data={
@@ -197,14 +202,17 @@ data_to_percentage_cases = [
                 ],
             }
         ),
-        (pd.DataFrame(data={"leading digits": [50.0, 50.0]}, index=[1.0, 2.0])),
+        (pd.DataFrame(data={"leading digits": [
+         50.0, 50.0]}, index=[1.0, 2.0])),
     ),
 ]
 
-# find_values_outside_range(data: pd.DataFrame, min_range: pd.Series, max_range: pd.Series) -> list:
+# find_values_outside_range(data: pd.DataFrame, min_range: pd.Series,
+# max_range: pd.Series) -> list:
 find_values_outside_range_cases = [
     # Check that standard case with the height of data being equal to
-    # the length of both max_range and min_range returns a list of tuples as expected
+    # the length of both max_range and min_range returns a list of tuples as
+    # expected
     (
         pd.DataFrame(
             data={
@@ -264,7 +272,8 @@ find_values_outside_range_cases = [
     ),
 ]
 
-# find_values_outside_range(data: pd.DataFrame, min_range: pd.Series, max_range: pd.Series) -> list:
+# find_values_outside_range(data: pd.DataFrame, min_range: pd.Series,
+# max_range: pd.Series) -> list:
 find_values_outside_range_cases_invalid = [
     # Check that invalid input with unequal
     (
@@ -277,28 +286,11 @@ find_values_outside_range_cases_invalid = [
         ),
         pd.Series([15, 2, 34, 96, 8]),
         pd.Series([20, 5, 34, 53, 46, 3]),
-        [
-            ("votes", 0, 10),
-            ("votes", 1, 11),
-            ("votes", 3, 12),
-            ("votes", 4, 13),
-            ("votes", 5, 14),
-            ("votes2", 0, 46),
-            ("votes2", 1, 32),
-            ("votes2", 2, 69),
-            ("votes2", 3, 420),
-            ("votes2", 4, 140),
-            ("votes2", 5, 2),
-            ("votes3", 0, 1),
-            ("votes3", 1, 12),
-            ("votes3", 2, 56),
-            ("votes3", 4, 24),
-            ("votes3", 5, 21),
-        ],
     ),
 ]
 
-# find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series, pd.Series, pd.Series):
+# find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series,
+# pd.Series, pd.Series):
 find_std_dev_range_cases = [
     # Check that a dataframe with only ones in each row returns 1 for the mean, 0
     # for the standard deviation, 1 for the max value, 1 for the min value
@@ -392,11 +384,28 @@ find_std_dev_range_cases = [
 
 # Define additional testing lists and functions that check other properties of
 # functions in data_analysis.py
-@pytest.mark.parametrize("input,output", get_ideal_benfords)
-def test_get_ideal_benfords(input, output):
-    assert get_theoretical_benford_law_values(*input).index.tolist() == pytest.approx(
+
+
+@pytest.mark.parametrize("input_values,output", get_ideal_benfords)
+def test_get_ideal_benfords(input_values, output):
+    """
+    Test that the get_theoretical_benford_law_values function works as intended.
+    The function should return the values predicted by benford's law for each
+    digit 1-9.
+
+    Args:
+        input_values(OPTIONAL): an integer representing the number of time steps
+        (will default to 9).
+        output: a pandas Series containing the predicted frequency of the digits
+        1-9.
+    """
+    assert get_theoretical_benford_law_values(
+        *input_values
+    ).index.tolist() == pytest.approx(
         output.index.tolist(), 0.01
-    ) and get_theoretical_benford_law_values(*input).to_list() == pytest.approx(
+    ) and get_theoretical_benford_law_values(
+        *input_values
+    ).to_list() == pytest.approx(
         output.to_list(), 0.01
     )
 
@@ -405,13 +414,27 @@ def test_get_ideal_benfords(input, output):
     "data,column_name,threshold,output", find_all_leading_digits_cases
 )
 def test_find_all_leading_digits(data, column_name, threshold, output):
+    """
+    Test that the function find_all_leading_digits finds all of the leadings
+    digits in a dataframe.
+
+    Args:
+        data: a pandas DataFrame containing the votes data (data with numerical
+        values)
+        column_name: a string representing the name of the column to sort the
+        leading digits by
+        threshold: integer representing the minimum number of digits in the
+        column with data
+        output: a pandas dataFrame containing all of the leading digits found in
+        the given dataset that meet the threshold cutoff.
+    """
     assert (
         pd.testing.assert_frame_equal(
             find_all_leading_digits(data, *column_name, *threshold),
             output,
             check_dtype=False,
         )
-        == None
+        is None
     )
 
 
@@ -419,40 +442,100 @@ def test_find_all_leading_digits(data, column_name, threshold, output):
     "data,column_name,threshold,output", get_vote_by_category_cases
 )
 def test_get_vote_by_category(data, column_name, threshold, output):
+    """
+    Test that the function get_vote_by_category works as intended. The function
+    should return a dataframe of the votes sorted by the given category.
+
+    Args:
+        data: a dataframe containing the votes data and at least one category
+        column
+        column_name: a string representing the name of the category to sort by
+        threshold: and integer representing the minimum number of digits in the
+        column with data
+        output: a pandas DataFrame containing the votes sorted by category
+    """
     real_output = get_vote_by_category(data, column_name, *threshold)
     for category, values in real_output.items():
         assert (
-            category in output.keys() and output[category].to_list() == values.to_list()
+            category in output.keys()
+            and output[category].to_list() == values.to_list()
         )
 
 
 @pytest.mark.parametrize("data,output", data_to_percentage_cases)
 def test_data_to_percentage(data, output):
-    assert pd.testing.assert_frame_equal(data_to_percentage(data), output) == None
+    """
+    Test that the data_to_percentage function is returning a dataframe
+    containing the percentage that each unique value occurs in the dataset
+
+    Args:
+        data: a pandas dataframe containing a column with some values
+        output: a pandas dataframe containing the percentage of times that each
+        unique value occurs in the dataset
+    """
+    assert (
+        pd.testing.assert_frame_equal(data_to_percentage(data), output) is None
+    )
 
 
 @pytest.mark.parametrize(
     "data, min_range, max_range,output", find_values_outside_range_cases
 )
 def test_find_values_outside_range(data, min_range, max_range, output):
+    """
+    Test the function find_values_outside_range to check that it finds values in
+    each column of data that fall below or above their respective
+    value in min_range and max_range respectively.
+
+    Args:
+        data: a pandas dataframe containing the votes data
+        min_range: a pandas Series containing the minimum probabilities that
+        each digit 1-9 can occur
+        max_range: a pandas Series containing the maximum probabilities that
+        each digit 1-9 can occur
+        output: a list of states that fall outside of the min and max range for
+        each digit
+    """
     assert find_values_outside_range(data, min_range, max_range) == output
 
 
 @pytest.mark.parametrize(
-    "data, min_range, max_range,output", find_values_outside_range_cases_invalid
+    "data, min_range, max_range", find_values_outside_range_cases_invalid
 )
-def test_find_values_outside_range_invalid_input(data, min_range, max_range, output):
+def test_find_values_outside_range_invalid_input(data, min_range, max_range):
+    """
+    Test that the find_values_outside_range function returns an error if there
+    is an invalid input
+
+    Args:
+        data: a pandas dataframe containing the votes data
+        min_range: a pandas Series containing the minimum probabilities that
+        each digit 1-9 can occur
+        max_range: a pandas Series containing the maximum probabilities that
+        each digit 1-9 can occur
+    """
     with pytest.raises(ValueError):
         assert find_values_outside_range(data, min_range, max_range)
 
 
 @pytest.mark.parametrize("data,output", find_std_dev_range_cases)
 def test_find_std_dev_range(data, output):
+    """
+    Test that the find_std_dev_range function finds the mean and standard
+    deviation for each row, and the values that are
+    1.96 standard deviations below and above the mean.
+
+    Args:
+        data: a pandas dataframe containing the column with the votes data
+        or some numerical data)
+        output: four pandas Series containing the mean, standard deviation,
+        min value, and max value for each digit.
+    """
     data_output = find_std_dev_range(data)
     for i in range(4):
         assert (
             np.testing.assert_almost_equal(
                 data_output[i].to_list(), output[i].to_list(), decimal=3
             )
-            == None
+            is None
         )
