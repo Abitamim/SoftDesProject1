@@ -1,5 +1,5 @@
 """
-Contains helper functions for analyzing the election data.
+Contains helper functions for analyzing and plotting the election data.
 """
 
 import pandas as pd
@@ -8,15 +8,25 @@ import matplotlib.pyplot as plt
 
 
 def plot_subplots_bar(mean_label: str, values_outside_std_dev: list, mean: pd.Series, min_val: pd.Series, max_val: pd.Series, bar_colors: list) -> None:
-    """[summary]
+    """
+    Plots the regions or states that are more than 1.96 standard deviations from
+    the mean.
 
     Args:
-        mean_label (str): [description]
-        values_outside_std_dev (list): [description]
-        mean (pd.Series): [description]
-        min_val (pd.Series): [description]
-        max_val (pd.Series): [description]
-        bar_colors (list): 
+        mean_label (str): a string representing the label for the mean
+        values_outside_std_dev (list): a list of integers or floats containing
+        the values of the regions or states that are more than 1.96 standard
+        deviations away from the mean.
+        mean (pd.Series): a pandas Series containing all of the means for a
+        country for each digit.
+        min_val (pd.Series): a pandas Series representing the values 1.96
+        standard deviations below the mean for each digit.
+        max_val (pd.Series): a pandas Series representing the values 1.96
+        standard deviations above the mean for each digit.
+        bar_colors (list): A list of strings with two colors, such as 'green'
+        and 'blue'. The first color is used for the country mean, and the
+        second color is used for the regions or states that are outside of
+        the given range.
     """    
     x = np.linspace(-1, 10, 100)
     fig, axs = plt.subplots(3, 3, figsize=(20, 20))
@@ -39,6 +49,14 @@ def plot_subplots_bar(mean_label: str, values_outside_std_dev: list, mean: pd.Se
                 hspace=0.4)
 
 def plot_labels(x_label: str = None, y_label: str = None, title: str = None):
+    '''
+    Adds title and labels to a plot. 
+
+    Args: 
+        x_label: a string representing the x-axis title
+        y_label: a string representing the y-axis title
+        title: a string representing the title of the chosen plot
+    '''
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
@@ -47,6 +65,14 @@ def plot_labels(x_label: str = None, y_label: str = None, title: str = None):
 
 
 def plot_ideal_benfords_law_curve(num_values: int, color: str = "black", thickness: float = 1) -> None:
+    '''
+    Generates the theoretical values for the Benford's Law Curve for the first
+    leading digit and plots these values as a line graph.
+
+    Args:
+        num_values: an integer representing the number of time steps. Will
+        default to nine if a number greater than 9 is given.
+    '''
     ideal_values = get_theoretical_benford_law_values(num_values)
     plt.plot(ideal_values.index, ideal_values, color=color,
              linewidth=thickness, label="Benford's Law Curve")
@@ -54,19 +80,19 @@ def plot_ideal_benfords_law_curve(num_values: int, color: str = "black", thickne
 def find_all_leading_digits(data: pd.DataFrame, column_name: str = None, leading_digit: int = 1, threshold: int = 0) -> pd.DataFrame:
     """
     Takes data from a given csv file and finds all of the specified leading
-digits in the "votes" column and returns the leadings digits of each category in
-a Series.
-Note
+    digits in the "votes" column and returns the leadings digits of each
+    category in a Series.
+    Note
     that any leading digits that are 0 will be removed as Benford's law does not
     apply to 0s, thus only values 1-9 will be returned.
 
     Args: 
-data: (DataFrame) A dataframe with the data. Must have one column with the name
-"votes" and if trying to find leading digit for categories in certain column,
-must also have column_name.
-column_name: (str) a single column from a dataframe containing the name of the
-column to find the leading digit of each unique category within or None if
-trying to find leading digit from entire dataframe.
+        data: (DataFrame) A dataframe with the data. Must have one column with
+        the name "votes" and if trying to find leading digit for categories in
+        certain column, must also have column_name.
+        column_name: (str) a single column from a dataframe containing the name
+        of the column to find the leading digit of each unique category within
+        or None if trying to find leading digit from entire dataframe.
         leading_digit: an integer representing which leading digit to grab, such
         as the 1st leading digit.
 
@@ -99,27 +125,37 @@ trying to find leading digit from entire dataframe.
 
 def get_vote_by_category(data: pd.DataFrame, column_name: str, threshold: int = 0) -> dict:
     """
-    Finds the vote count by category, which is the unique values in a column of date.
+    Finds the vote count by category, which is the unique values in a column of
+    the data.
+
+    For example, getting votes based on the candidate column will return a
+    dictionary with the keys being the candidates, and each candidate
+    mapped to a tuple of all votes received.
 
     Args:
-        date (pd.DataFrame): [description]
-        column_name (str): [description]
+        date (pd.DataFrame): a pandas DataFrame containing the data with the
+        votes.
+        column_name (str): a string representing the name of the column that
+        will be used to sort through the votes. 
 
     Returns: 
-dict: A dictionary will categories as keys and dataframes and the rows
-belonging to them in data as a Series with the votes.
+        dict: A dictionary will categories as keys and dataframes and the rows
+        belonging to them in data as a Series with the votes.
     """    
     return {key: val["votes"] for key, val in dict(tuple(data.groupby(by=column_name))).items() if val["votes"].size >= threshold}
 
 def data_to_percentage(data_list: pd.DataFrame) -> pd.DataFrame:
     """
-Takes a dataframe with one or more columns filled with digits and returns a
-dataframe with the percentages corresponding to the number of times the numbers 1-9 appear in each column.
+    Takes a dataframe with one or more columns filled with digits and returns a
+    dataframe with the percentages corresponding to the number of times the
+    numbers 1-9 appear in each column.
 
     Args: 
-        data_list: a dataframe of integers representing all of the leading digits
-        from a dataset (in this case, the number of vote counts). Each columns is a category and is a Series with digits.
-        threshold: (int) minimum number of integers in column for percentage to be found in it and for it to be returned.
+        data_list: a dataframe of integers representing all of the leading
+        digits from a dataset (in this case, the number of vote counts).
+        Each columns is a category and is a Series with digits.
+        threshold: (int) minimum number of integers in column for percentage
+        to be found in it and for it to be returned.
 
     Returns: 
         returns a dataframe of Series with the percentages of each column that 
@@ -138,14 +174,16 @@ dataframe with the percentages corresponding to the number of times the numbers 
 
 def get_theoretical_benford_law_values(num_values: int = 9) -> pd.Series:
     """
-Generates a Series with the index being the x values of the Benford's law curve
-and the values being the y values of the curve.
+    Generates a Series with the index being the x values of the Benford's law
+    curve and the values being the y values of the curve.
 
     Args:
-        num_values (int, optional): If value lower than 9 is given, it is set to 9. Defaults to 9.
+        num_values (int, optional): an integer representing the number of time
+        steps. Will default to nine if a number greater than 9 is given.
 
     Returns:
-        pd.Series: [description]
+        A pandas DataFrame containing the theoretical Benford's law distribution
+        values.
     """    
     if num_values < 9:
         num_values = 9
@@ -156,16 +194,18 @@ and the values being the y values of the curve.
 
 def find_values_outside_range(data: pd.DataFrame, min_range: pd.Series, max_range: pd.Series) -> list:
     """
-Finds values in each column of data that fall below or above their respective
-valuein min_range and max_range respectively.
+    Finds values in each column of data that fall below or above their respective
+    value in min_range and max_range respectively.
 
     Args:
-        data (pd.DataFrame): Data with columns filled with numerical values
-        min_range (pd.Series): Series with same length as data height
-        max_range (pd.Series): Series with same length as data height
+        data (pd.DataFrame): a pandas DataFrame containing the votes data.
+        min_range (pd.Series): a pandas Series with the same length as data
+        height.
+        max_range (pd.Series): a pandas Series with same length as data height
 
     Returns:
-        list: list of tuples with format (column name, value outside range) for each value outside range.
+        A list of tuples with the format (column name, value outside range) for
+        each value outside range.
     """
     if min_range.size != len(data.index) or max_range.size != len(data.index):
         raise ValueError(
@@ -182,16 +222,17 @@ valuein min_range and max_range respectively.
 
 def find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series, pd.Series, pd.Series): 
     """
-Finds the mean and std. dev. for each row, and the values that are 1.96 std. dev. below and above
-the mean.
+    Finds the mean and standard deviation for each row, and the values that are
+    1.96 standard deviations below and above the mean.
 
     Args:
-        data (pd.DataFrame):  
+        data (pd.DataFrame): a pandas DataFrame containing the column with the
+        votes data.  
     
     Returns:
-        pd ([type]): [description]
-        pd ([type]): [description]
-        pd ([type]): [description]
+        Four pandas Series containing the mean, standard deviation, maximum
+        values, and minimum values.The maximum and minimum values represent the
+        votes that are above or below 1.96 standard deviations from the mean.
     """    
     means = data.mean(axis=1)
     std_devs = data.std(axis=1, ddof=0)
