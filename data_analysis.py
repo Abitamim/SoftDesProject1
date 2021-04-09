@@ -239,7 +239,7 @@ def find_values_outside_range(
         max_range (pd.Series): a pandas Series with same length as data height
 
     Returns:
-        A list of tuples with the format (column name, value outside range) for
+        A list of tuples with the format (column name, row number, value outside range) for
         each value outside range.
     """
     if min_range.size != len(data.index) or max_range.size != len(data.index):
@@ -252,7 +252,8 @@ def find_values_outside_range(
     return_list = []
     for column in data_boolean:
         for index, element in data_boolean[column].iteritems():
-            if False in element:
+            #The second comparison ensures no np.NaN values get added to a tuple.
+            if False in element and data[column][index] == data[column][index]: 
                 return_list.append((column, index, data[column][index]))
 
     return return_list
@@ -274,8 +275,6 @@ def find_std_dev_range(
         values, and minimum values.The maximum and minimum values represent the
         votes that are above or below 1.96 standard deviations from the mean.
     """
-    if len(data.index) != 9:
-        return None, None, None, None
     means = data.mean(axis=1)
     std_devs = data.std(axis=1, ddof=0)
     max_vals = pd.Series(
