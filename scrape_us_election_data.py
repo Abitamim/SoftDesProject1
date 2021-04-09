@@ -6,6 +6,7 @@ in the US 2020 Presidential election.
 from os import stat
 from selenium import webdriver
 
+
 def get_vote_counts(driver) -> str:
     """
     Turns a page of with the vote counts from a county election into a csv.
@@ -17,9 +18,10 @@ def get_vote_counts(driver) -> str:
         str: csv formatted in this format: candidate, votes, "county, state"
     """
     candidates = [
-        x.text.replace(',', ' ') for x in driver.find_elements_by_class_name("name")[::3]
+        x.text.replace(",", " ")
+        for x in driver.find_elements_by_class_name("name")[::3]
     ]
-    
+
     votes = [
         int(x.text.replace(",", ""))
         for x in driver.find_elements_by_class_name("num")[::2]
@@ -40,7 +42,7 @@ def get_vote_counts(driver) -> str:
     )
 
 
-def save_csv(vote_data: str, file_path: str, column_names:str):
+def save_csv(vote_data: str, file_path: str, column_names: str):
     """
     Adds csv data at end of provided file.
 
@@ -85,7 +87,11 @@ def get_data_for_states():
                 input_button = driver.find_element_by_name("submit")
                 input_button.click()
                 county_data = get_vote_counts(driver)
-                save_csv(county_data, "data/2020-us-elections-data.csv",'candidate,votes,county,state')
+                save_csv(
+                    county_data,
+                    "data/2020-us-elections-data.csv",
+                    "candidate,votes,county,state",
+                )
                 driver.back()
 
 
