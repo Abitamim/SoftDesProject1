@@ -85,7 +85,7 @@ def get_data_for_states():
                 input_button = driver.find_element_by_name("submit")
                 input_button.click()
                 county_data = get_vote_counts(driver)
-                save_csv(county_data, "data/2020-elections-data.csv",'candidate,votes,county,state')
+                save_csv(county_data, "data/2020-us-elections-data.csv",'candidate,votes,county,state')
                 driver.back()
 
 
