@@ -20,9 +20,9 @@ If you are having trouble with the installation process, please go to the [Selen
 ## Running the Web-Scraping Scripts: 
 The code used to obtain the data is specific to the election data websites we used (for more information, see the computational essay). If you wish to use this script on other sources, you would have to modify the script to fit the architecture of the website you are using. However, in most cases our code might only be useful as a guideline rather than a template. 
 ### Russia: 
-	This program is located in the file scrape_russia_election_data.py. To run the web-scraping script for Russia, simply hit run or control enter to run the program. Note that you will have to wait for the browser to open and manually input the numerical code shown on the screen. The program will give you 10 seconds to manually input the code before it tries to proceed with the rest of the code. If you feel that 10 seconds is not enough time to input the code, you can change this value on line 96. 
+This program is located in the file scrape_russia_election_data.py. To run the web-scraping script for Russia, simply hit run or control enter to run the program. Note that you will have to wait for the browser to open and manually input the numerical code shown on the screen. The program will give you 10 seconds to manually input the code before it tries to proceed with the rest of the code. If you feel that 10 seconds is not enough time to input the code, you can change this value on line 96. 
 ### United States: 
-	To run the US web-scraping script, simply navigate to scrape_us_election_data.py and run the whole script. No user input is required to run this script. 
+To run the US web-scraping script, simply navigate to scrape_us_election_data.py and run the whole script. No user input is required to run this script. 
 
 ## Generating the Figures: 
 
