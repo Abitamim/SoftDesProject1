@@ -23,32 +23,42 @@ get_ideal_benfords= [
     # Check that a value under 9 gives an error
     ([8], pd.Series(np.array([30.1, 17.609, 12.494, 9.691, 7.918, 6.694, 5.799, 5.115, 4.575]), index=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]))),
 ]
-#data: pd.DataFrame, column_name: str = None, leading_digit: int = 1, threshhold: int = 0
+#data: pd.DataFrame, column_name: str = None, leading_digit: int = 1, threshold: int = 0
 
 find_all_leading_digits_cases = [
     #Check that a random dataset returns the correct dataframe with leading
     #digits 
-    ([pd.dataFrame(data={'random title': ['red', 'red', 'red', 'blue', 'blue'],'votes':[10,15,22,111,20]}), 'random title', 1],pd.dataFrame(data={'index':[0,1,2,3,4],'red':[1, 1, 2] ,'blue': [1, 2]})),
-    #Check that if the threshhold value is 3, only leading digits for red
+    (pd.DataFrame(data={'random title': ['red', 'red', 'red', 'blue', 'blue'],'votes':[10,15,22,111,20]}), ['random title'],[1],[],pd.DataFrame(data={'red':[1, 1, 2] ,'blue': [1, 2, np.NaN]})),
+    #Check that if the threshold value is 3, only leading digits for red
     #are returned
-    ([pd.dataFrame(data={'random title': ['red', 'red', 'red', 'blue', 'blue'],'votes':[10,15,22,111,20]}), 'random title', 1, 3],pd.dataFrame(data={'index':[0,1,2,3,4],'red':[1, 1, 2]})),
+    (pd.DataFrame(data={'random title': ['red', 'red', 'red', 'blue', 'blue'],'votes':[10,15,22,111,20]}), ['random title'],[1],[3],pd.DataFrame(data={'red':[1, 1, 2]})),
     
 ]
 
-#get_vote_by_category(data: pd.DataFrame, column_name: str, threshhold: int = 0)
-get_vote_by_category_cases = [
-    #Check that a dataFrame with 2 categories returns two columns with the
-    #'votes' for each category
-    ([pd.dataFrame(data = {'categories': ['red','red','red','red','blue','blue','blue'],'votes':[1, 1, 1, 1, 2, 2, 2]}), 'categories'], pd.dataFrame(data={'index':[0,1,2,3,4],'red':[1,1,1,1],'blue':[2,2,2]})),
-]
+# #get_vote_by_category(data: pd.DataFrame, column_name: str, threshold: int = 0)
+# get_vote_by_category_cases = [
+#     #Check that a dataFrame with 2 categories returns two columns with the
+#     #'votes' for each category
+#     (pd.dataFrame(data = {'categories': ['red','red','red','red','blue','blue','blue'],'votes':[1, 1, 1, 1, 2, 2, 2]}), 'categories', pd.dataFrame(data={'index':[0,1,2,3,4],'red':[1,1,1,1],'blue':[2,2,2]})),
+# ]
 
-#data_to_percentage(data_list: pd.DataFrame) -> pd.DataFrame:
-data_to_percentage_cases = [
-    #Check that 
-    (),
-]
+# #data_to_percentage(data_list: pd.DataFrame) -> pd.DataFrame:
+# data_to_percentage_cases = [
+#     #Check that 
+#     (),
+# ]
 
+# #find_values_outside_range(data: pd.DataFrame, min_range: pd.Series, max_range: pd.Series) -> list:
+# find_values_outside_range_cases = [
+#     #Check that 
+#     (),
+# ]
 
+# #find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series, pd.Series, pd.Series):
+# find_std_dev_range_cases = [
+#     #Check that 
+#     (),
+# ]
 
 # Define additional testing lists and functions that check other properties of
 # functions in data_analysis.py
@@ -56,14 +66,22 @@ data_to_percentage_cases = [
 def test_get_ideal_benfords(input, output):
     assert get_theoretical_benford_law_values(*input).index.tolist() == pytest.approx(output.index.tolist(), .01) and get_theoretical_benford_law_values(*input).to_list() == pytest.approx(output.to_list(), .01) 
 
-@pytest.mark.parametrize("input,output", find_all_leading_digits_cases)
-def test_find_all_leading_digits(input, output): 
-    assert find_all_leading_digits(input) == output
+@pytest.mark.parametrize("data,column_name,leading_digit,threshold,output", find_all_leading_digits_cases)
+def test_find_all_leading_digits(data, column_name, leading_digit, threshold, output): 
+    assert find_all_leading_digits(data, *column_name, *leading_digit, *threshold).eq(output)
 
-@pytest.mark.parametrize("input,output", get_vote_by_category_cases)
-def test_get_vote_by_category(input, output): 
-    assert get_vote_by_category(input) == output
+# @pytest.mark.parametrize("data,column_name,threshold,output", get_vote_by_category_cases)
+# def test_get_vote_by_category(data, column_name, threshold, output): 
+#     assert get_vote_by_category(data, column_name, threshold) == output
 
-@pytest.mark.parametrize("input,output", data_to_percentage_cases)
-def test_data_to_percentage(input, output): 
-    assert data_to_percentage(input) == output
+# @pytest.mark.parametrize("data,output", data_to_percentage_cases)
+# def test_data_to_percentage(data, column_name, output): 
+#     assert data_to_percentage(data) == output
+
+# @pytest.mark.parametrize("data, min_range, max_range,output", find_values_outside_range_cases)
+# def test_find_values_outside_range(data, min_range, max_range, output): 
+#     assert find_values_outside_range(data, min_min_range, max_range) == output
+
+# @pytest.mark.parametrize("data,series1, series2, series3, series4", find_std_dev_range_cases)
+# def test_find_std_dev_range(data, series1,min_range, max_range, series1,series2, series3, series4): 
+#     assert find_std_dev_range(data) == series1, series2, series3, series4
