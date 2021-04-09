@@ -95,7 +95,7 @@ def find_all_leading_digits(data: pd.DataFrame, column_name: str = None, leading
         or None if trying to find leading digit from entire dataframe.
         leading_digit: an integer representing which leading digit to grab, such
         as the 1st leading digit.
-        theshhold: integer representing the minimum number of discrete numbers
+        threshold: integer representing the minimum number of discrete numbers
         in the votes column for a category to be included in the return
         dataframe
 
@@ -126,7 +126,7 @@ def find_all_leading_digits(data: pd.DataFrame, column_name: str = None, leading
     return pd.DataFrame(by_category)
 
 
-def get_vote_by_category(data: pd.DataFrame, column_name: str, threshhold: int = 0) -> dict:
+def get_vote_by_category(data: pd.DataFrame, column_name: str, threshold: int = 0) -> dict:
     """
     Finds the vote count by category, which is the unique values in a column of
     the data.
@@ -140,7 +140,7 @@ def get_vote_by_category(data: pd.DataFrame, column_name: str, threshhold: int =
         votes.
         column_name (str): a string representing the name of the column that
         will be used to sort through the votes. 
-        theshhold: integer representing the minimum number of discrete numbers
+        threshold: integer representing the minimum number of discrete numbers
         in the votes column for a category to be included in the return
         dataframe
 
@@ -148,7 +148,7 @@ def get_vote_by_category(data: pd.DataFrame, column_name: str, threshhold: int =
         dict: A dictionary will categories as keys and dataframes and the rows
         belonging to them in data as a Series with the votes.
     """    
-    return {key: val["votes"] for key, val in dict(tuple(data.groupby(by=column_name))).items() if val["votes"].size >= threshhold}
+    return {key: val["votes"] for key, val in dict(tuple(data.groupby(by=column_name))).items() if val["votes"].size >= threshold}
 
 def data_to_percentage(data_list: pd.DataFrame) -> pd.DataFrame:
     """
