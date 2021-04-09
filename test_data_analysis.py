@@ -56,18 +56,29 @@ data_to_percentage_cases = [
     (pd.DataFrame(data = {'leading digits': [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],'second column': [1, 1, 1, 1,np.NaN,np.NaN,np.NaN,np.NaN,np.NaN,np.NaN]}), (pd.DataFrame(data = {'leading digits': [50.0,50.0]}, index = [1.0,2.0]))),
 ]
 
-#find_values_outside_range(data: pd.DataFrame, min_range: pd.Series, max_range: pd.Series) -> list:
-find_values_outside_range_cases = [
-    #Check that 
-    (pd.DataFrame(data = {'votes':[10,11,12,12,13,14]}), pd.Series()),
-]
-
-# #find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series, pd.Series, pd.Series):
-# find_std_dev_range_cases = [
-#     #Check that a dataframe with only ones in each row returns 1 for the mean, 0
-#     #for the standard deviation, 1 for the max value, 1 for the min value
-#     (pd.DataFrame(data = {'col1': [1,1,1,1,1,1,1,1,1],'col2': [1,1,1,1,1,1,1,1,1], 'col3': [1,1,1,1,1,1,1,1,1]},index = [1, 2, 3,4,5,6,7,8,9]), (pd.Series(data = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}, index = [1,2,3,4,5,6,7,8,9]),pd.Series(data = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}, index = [1,2,3,4,5,6,7,8,9]),pd.Series(data = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}, index = [1,2,3,4,5,6,7,8,9]),pd.Series(data = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}, index = [1,2,3,4,5,6,7,8,9]))), 
+# #find_values_outside_range(data: pd.DataFrame, min_range: pd.Series, max_range: pd.Series) -> list:
+# find_values_outside_range_cases = [
+#     #Check that 
+#     (pd.DataFrame(data = {'votes':[10,11,12,12,13,14]}), pd.Series()),
 # ]
+
+#find_std_dev_range(data: pd.DataFrame) -> (pd.Series,pd.Series, pd.Series, pd.Series):
+find_std_dev_range_cases = [
+    #Check that a dataframe with only ones in each row returns 1 for the mean, 0
+    #for the standard deviation, 1 for the max value, 1 for the min value
+    (pd.DataFrame(data = {'col1': [1,1,1,1,1,1,1,1,1],'col2': [1,1,1,1,1,1,1,1,1], 'col3': [1,1,1,1,1,1,1,1,1]},index = [1,2,3,4,5,6,7,8,9]), \
+        (pd.Series(data = 9*[1.0], index = [1,2,3,4,5,6,7,8,9]),\
+        pd.Series(data = 9*[0.0], index = [1,2,3,4,5,6,7,8,9]),\
+        pd.Series(data = 9*[1.0], index = [1,2,3,4,5,6,7,8,9]),\
+        pd.Series(data = 9*[1.0], index = [1,2,3,4,5,6,7,8,9]))), 
+    #Check that a dataframe with 3 columns of random values returns the correct
+    #mean, standard deviation, max value, and min value
+    (pd.DataFrame(data = {'col1': [1,2,3,4,5,6,7,8,9],'col2': [9,8,7,6,5,4,3,2,1], 'col3': [1,2,3,4,5,6,7,8,9]},index = [1,2,3,4,5,6,7,8,9]),\
+          (pd.Series(data = [3.666667,4.000000,4.333333,4.666667,5.000000,5.333333,5.666667,6.000000,6.333333], index = [1,2,3,4,5,6,7,8,9]),\
+          pd.Series(data = [3.771236,2.828427,1.885618,0.942809,0.000000,0.942809,1.885618,2.828427,3.771236], index = [1,2,3,4,5,6,7,8,9]),\
+          pd.Series(data = [11.058290, 9.543717,8.029145,6.514572,5.000000,7.181239,9.362478,11.543717,13.724956], index = [1,2,3,4,5,6,7,8,9]),\
+          pd.Series(data = [-3.724956,-1.543717,0.637522,2.818761,5.000000,3.485428,1.970855,0.456283,-1.058290], index = [1,2,3,4,5,6,7,8,9]))),
+]
 
 # Define additional testing lists and functions that check other properties of
 # functions in data_analysis.py
@@ -87,10 +98,13 @@ def test_get_ideal_benfords(input, output):
 def test_data_to_percentage(data, output): 
     assert pd.testing.assert_frame_equal(data_to_percentage(data), output) == None
 
-@pytest.mark.parametrize("data, min_range, max_range,output", find_values_outside_range_cases)
-def test_find_values_outside_range(data, min_range, max_range, output): 
-    assert pd.testing.assert_frame_equal(find_values_outside_range(data, min_range, max_range), output) == None
+# @pytest.mark.parametrize("data, min_range, max_range,output", find_values_outside_range_cases)
+# def test_find_values_outside_range(data, min_range, max_range, output): 
+#     assert pd.testing.assert_frame_equal(find_values_outside_range(data, min_range, max_range), output) == None
 
-# @pytest.mark.parametrize("data,output", find_std_dev_range_cases)
-# def test_find_std_dev_range(data,min_range, max_range, output): 
-#     assert pd.testing.assert_frame_equal(find_std_dev_range(data), *output) == None
+@pytest.mark.parametrize("data,output", find_std_dev_range_cases)
+def test_find_std_dev_range(data,output): 
+    data_output = find_std_dev_range(data)
+    for i in range(4):
+        assert np.testing.assert_almost_equal(data_output[i].to_list(), output[i].to_list(), decimal = 3) == None
+        
