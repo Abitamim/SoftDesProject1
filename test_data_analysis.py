@@ -473,6 +473,7 @@ def test_data_to_percentage(data, output):
         output: a pandas dataframe containing the percentage of times that each
         unique value occurs in the dataset
     """
+    assert False
     assert (
         pd.testing.assert_frame_equal(data_to_percentage(data), output) is None
     )
