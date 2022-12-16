@@ -473,7 +473,6 @@ def test_data_to_percentage(data, output):
         output: a pandas dataframe containing the percentage of times that each
         unique value occurs in the dataset
     """
-    assert False
     assert (
         pd.testing.assert_frame_equal(data_to_percentage(data), output) is None
     )
@@ -497,6 +496,7 @@ def test_find_values_outside_range(data, min_range, max_range, output):
         output: a list of states that fall outside of the min and max range for
         each digit
     """
+    assert False
     assert find_values_outside_range(data, min_range, max_range) == output
 
 
