@@ -496,6 +496,7 @@ def test_find_values_outside_range(data, min_range, max_range, output):
         output: a list of states that fall outside of the min and max range for
         each digit
     """
+    assert False
     assert find_values_outside_range(data, min_range, max_range) == output
 
 
